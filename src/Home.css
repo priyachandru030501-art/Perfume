@@ -1,0 +1,143 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Poppins", "Inter", system-ui, sans-serif; color: #fff; }
+
+/* registered colours so the whole theme can animate smoothly */
+@property --bg     { syntax: "<color>"; inherits: true; initial-value: #7a2f86; }
+@property --glow   { syntax: "<color>"; inherits: true; initial-value: #c47ad0; }
+@property --sphere { syntax: "<color>"; inherits: true; initial-value: #c28cf0; }
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  transition: --bg .9s ease, --glow .9s ease, --sphere .9s ease;
+}
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  padding: 0 4vw;
+  transition: filter .35s ease, transform .35s ease;
+}
+.page.blurred { filter: blur(10px) brightness(.7); transform: scale(1.02); pointer-events: none; }
+
+.brand {
+  position: absolute; top: 26px; left: 0; right: 0; text-align: center;
+  font-weight: 700; font-size: 1.15rem; letter-spacing: .02em; z-index: 5;
+}
+
+/* ---------- left ---------- */
+.copy { position: relative; z-index: 4; animation: rise .7s ease both; }
+.copy h1 { font-size: clamp(2.4rem, 4.6vw, 4.2rem); line-height: 1.12; font-weight: 800; letter-spacing: -.01em; }
+.copy p { margin-top: 24px; max-width: 24rem; line-height: 1.75; font-size: .98rem; opacity: .92; }
+
+/* ---------- stage ---------- */
+.stage {
+  --px: 0; --py: 0;
+  position: relative; z-index: 3;
+  height: min(86vh, 760px);
+  display: flex; align-items: center; justify-content: center;
+}
+.glow {
+  position: absolute; width: 62%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, var(--glow), transparent 68%);
+  opacity: .55; filter: blur(24px);
+}
+.layer { position: absolute; inset: 0; pointer-events: none; }
+.layer.far  { transform: translate(calc(var(--px) * -16px), calc(var(--py) * -12px)); }
+.layer.near { transform: translate(calc(var(--px) * 36px),  calc(var(--py) * 26px)); }
+
+.bottle-wrap { position: relative; z-index: 2; transform: translate(calc(var(--px) * 12px), calc(var(--py) * 8px)); }
+.bottle {
+  display: block; height: min(48vh, 420px); width: auto;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,.4));
+  /* new bottle drops in from the top, then floats */
+  animation: dropIn 1.8s cubic-bezier(.25,.85,.3,1) both, bob 5s ease-in-out 1.8s infinite;
+}
+/* old bottle flies up and away */
+.bottle.out { animation: flyUp .8s cubic-bezier(.45,0,.75,.5) forwards; }
+
+.price { position: absolute; bottom: 4%; left: 0; right: 0; text-align: center; z-index: 3; animation: rise .7s ease both; }
+.price strong { display: block; font-size: 2.3rem; font-weight: 800; }
+.price small { letter-spacing: .18em; font-size: .72rem; font-weight: 600; opacity: .85; }
+
+/* matte 3D balls */
+.ball, .bubble { position: absolute; display: block; border-radius: 50%; animation: drift ease-in-out infinite; }
+.ball {
+  background: radial-gradient(circle at 30% 26%,
+    color-mix(in srgb, var(--sphere) 55%, #fff) 0%,
+    var(--sphere) 38%,
+    color-mix(in srgb, var(--sphere) 45%, #000) 100%);
+  box-shadow: 0 14px 22px rgba(0,0,0,.28), inset -4px -6px 12px rgba(0,0,0,.18);
+}
+/* glass bubbles */
+.bubble {
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), rgba(255,255,255,.08) 70%);
+  border: 1px solid rgba(255,255,255,.25);
+  backdrop-filter: blur(2px);
+}
+
+/* ---------- right ---------- */
+.picker { position: relative; z-index: 4; justify-self: end; text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+.label { letter-spacing: .22em; font-size: .75rem; opacity: .75; }
+.picker h2 { font-size: 1.9rem; line-height: 1.1; margin-top: 8px; max-width: 8ch; font-weight: 700; animation: rise .5s ease both; }
+.swatches { display: flex; gap: 14px; margin-top: 22px; }
+.swatch {
+  width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+  outline: 2px solid transparent; outline-offset: 3px; transition: transform .25s, outline-color .25s;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.on { outline-color: var(--ring); }
+.buy {
+  margin-top: 26px; padding: 15px 46px; border: none; border-radius: 40px;
+  background: #fff; color: #1b1220; font: 600 1rem "Poppins", sans-serif; cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,.28); transition: transform .25s, box-shadow .25s;
+}
+.buy:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(0,0,0,.4); }
+
+/* ---------- glass pop-up ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.25);
+  animation: fade .3s ease both;
+}
+.modal {
+  position: relative; width: min(360px, 88vw);
+  padding: 44px 32px 36px; text-align: center;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--bg) 70%, #fff 30%);
+  border: 1px solid rgba(255,255,255,.35);
+  box-shadow: 0 30px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.4);
+  animation: modalIn .6s cubic-bezier(.2,.9,.3,1.2) both;
+}
+.modal .close {
+  position: absolute; top: 12px; right: 18px; border: none; background: none;
+  color: #fff; font-size: 1.8rem; cursor: pointer; opacity: .8;
+}
+.modal .close:hover { opacity: 1; }
+.m-icon { display: grid; place-items: center; margin-bottom: 14px; }
+.modal h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+.modal p { font-size: .92rem; line-height: 1.6; opacity: .92; }
+
+/* ---------- animations ---------- */
+@keyframes bob   { 0%,100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+@keyframes drift { 0%,100% { translate: 0 0; } 50% { translate: var(--dx) var(--dy); } }
+@keyframes rise  { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-90vh) rotate(-8deg); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes flyUp  { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-90vh) rotate(8deg); } }
+@keyframes fade  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn { from { opacity: 0; transform: translateY(40px) scale(.92); } to { opacity: 1; transform: none; } }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; padding: 90px 6vw 40px; gap: 10px; }
+  .picker { justify-self: center; align-items: center; text-align: center; }
+  .stage { height: 520px; order: 2; }
+  .copy { text-align: center; }
+  .copy p { margin-inline: auto; }
+}
