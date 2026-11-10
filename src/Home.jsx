@@ -7,7 +7,7 @@ const SCENTS = [
   {
     id: "date",
     name: "Date Woman",
-    img: "/date-women.png",
+    img: `${import.meta.env.BASE_URL}date-women.png`,
     swatch: "#c2557f",
     headline: ["Beautiful Nights", "Begin Here"],
     text: 'Bella Vita means "the beautiful life". Date Woman is made for the evenings that matter: dinners, dates and every moment you want to remember.',
@@ -22,7 +22,7 @@ const SCENTS = [
   {
     id: "ceo",
     name: "CEO Man",
-    img: "/ceo-man.png",
+    img: `${import.meta.env.BASE_URL}ceo-man.png`,
     swatch: "#16121a",
     ring: "#d6b25e",
     headline: ["Lead With", "Your Scent"],
@@ -38,7 +38,7 @@ const SCENTS = [
   {
     id: "fresh",
     name: "Fresh Unisex",
-    img: "/fresh-unisex.png",
+    img: `${import.meta.env.BASE_URL}fresh-unisex.png`,
     swatch: "#12a9a9",
     headline: ["Beautiful Days", "Start Fresh"],
     text: "A beautiful life begins with a fresh start. Fresh Unisex is a light, easy fragrance for anyone, any day, anywhere.",
@@ -63,6 +63,8 @@ const BALLS = [
   { x: 10, y: 74, s: 110, dx: 20, dy: -10, dur: 10, d: 0.8, b: 6 },
   { x: 52, y: 78, s: 34, dx: -10, dy: -14, dur: 6.5, d: 0.2, b: 0 },
 ];
+
+/* ---------- BUBBLES ---------- */
 
 const BUBBLES = [
   { x: 18, y: 30, s: 40, dx: 10, dy: 14, dur: 8, d: 0 },
@@ -161,13 +163,9 @@ export default function Home() {
     >
       <div className={`page${modal ? " blurred" : ""}`}>
 
-        {/* BRAND */}
-
         <header className="brand">
           Bella Vita
         </header>
-
-        {/* HERO CONTENT */}
 
         <section
           className="copy"
@@ -182,15 +180,11 @@ export default function Home() {
           <p>{sc.text}</p>
         </section>
 
-        {/* PERFUME STAGE */}
-
         <section
           className="stage"
           ref={stageRef}
         >
           <div className="glow" />
-
-          {/* BUBBLES */}
 
           <div className="layer far">
             {BUBBLES.map((b, i) => (
@@ -211,7 +205,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* BOTTLE IMAGE */}
+          {/* PERFUME BOTTLE */}
 
           <div className="bottle-wrap">
             <img
@@ -219,10 +213,11 @@ export default function Home() {
               src={bottle.img}
               alt={bottle.name}
               className={`bottle${leaving ? " out" : ""}`}
+              onError={(e) => {
+                console.error("Image not found:", e.currentTarget.src);
+              }}
             />
           </div>
-
-          {/* FLOATING BALLS */}
 
           <div className="layer near">
             {BALLS.map((b, i) => (
@@ -244,8 +239,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* PRICE */}
-
           <div
             className="price"
             key={sc.id + "-price"}
@@ -255,12 +248,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* PERFUME SELECTOR */}
-
         <aside className="picker">
-          <span className="label">
-            SCENT
-          </span>
+          <span className="label">SCENT</span>
 
           <h2 key={sc.id + "-name"}>
             {sc.name}
@@ -289,8 +278,6 @@ export default function Home() {
           </button>
         </aside>
       </div>
-
-      {/* BUY MODAL */}
 
       {modal && (
         <div
